@@ -3,6 +3,7 @@ import get from 'lodash/get'
 import Helmet from 'react-helmet'
 import Hero from '../components/hero'
 import ArticlePreview from '../components/article-preview'
+import PageTransitions from 'gatsby-plugin-page-transitions'
 
 class RootIndex extends React.Component {
   render() {
@@ -11,22 +12,35 @@ class RootIndex extends React.Component {
     const [author] = get(this, 'props.data.allContentfulPerson.edges')
 
     return (
-      <div style={{ background: '#fff' }}>
-        <Helmet title={siteTitle} />
-        <Hero data={author.node} />
-        <div className="wrapper">
-          <h2 className="section-headline">Recent articles</h2>
-          <ul className="article-list">
-            {posts.map(({ node }) => {
-              return (
-                <li key={node.slug}>
-                  <ArticlePreview article={node} />
-                </li>
-              )
-            })}
-          </ul>
+      <PageTransitions defaultStyle={{
+        transition: 'left 500ms cubic-bezier(0.47, 0, 0.75, 0.72)',
+        left: '100%',
+        position: 'absolute',
+        width: '100%',
+      }}
+      transitionStyles={{
+        entering: { left: '0%' },
+        entered: { left: '0%' },
+        exiting: { left: '100%' },
+      }}
+      transitionTime={500}>
+        <div style={{ background: '#fff' }}>
+          <Helmet title={siteTitle} />
+          <Hero data={author.node} />
+          <div className="wrapper">
+            <h2 className="section-headline">Recent articles</h2>
+            <ul className="article-list">
+              {posts.map(({ node }) => {
+                return (
+                  <li key={node.slug}>
+                    <ArticlePreview article={node} />
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
         </div>
-      </div>
+      </PageTransitions>
     )
   }
 }
